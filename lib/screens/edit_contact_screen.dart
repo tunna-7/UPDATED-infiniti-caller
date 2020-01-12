@@ -1,29 +1,32 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+
 import 'package:image_picker/image_picker.dart';
 import 'package:phonebook/models/contact.dart';
 import '../utilities/image_conversion.dart';
 import '../utilities/DatabaseHelper.dart';
 
-class AddContactScreen extends StatefulWidget {
-  static final String routeName = '/add-contact';
-
+class EditContactScreen extends StatefulWidget {
+  static final String routeName = '/edit-contact';
   @override
-  _AddContactScreenState createState() => _AddContactScreenState();
+  _EditContactScreenState createState() => _EditContactScreenState();
 }
 
-class _AddContactScreenState extends State<AddContactScreen> {
+class _EditContactScreenState extends State<EditContactScreen> {
   final _formKey = GlobalKey<FormState>();
   File _image;
   String _name, _lastName, _cellNumber, _stringImage;
+  DatabaseHelper _databaseHelper = DatabaseHelper();
 
   @override
   Widget build(BuildContext context) {
+    final Contact contact = ModalRoute.of(context).settings.arguments;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'New Contact',
+          'Edit Contact',
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24.0),
         ),
         centerTitle: true,
@@ -39,7 +42,7 @@ class _AddContactScreenState extends State<AddContactScreen> {
               Icons.check,
             ),
             onPressed: () {
-              _submit();
+              _submit(contact);
             },
           ),
         ],
@@ -53,13 +56,13 @@ class _AddContactScreenState extends State<AddContactScreen> {
           color: Theme.of(context).primaryColor,
         ),
         child: SingleChildScrollView(
-          child: _buildContactForm(),
+          child: _buildContactForm(contact),
         ),
       ),
     );
   }
 
-  Form _buildContactForm() {
+  Form _buildContactForm(Contact contact) {
     return Form(
       key: _formKey,
       child: Column(
@@ -87,8 +90,15 @@ class _AddContactScreenState extends State<AddContactScreen> {
                         borderRadius: BorderRadius.circular(20.0),
                         color: Colors.white,
                         image: DecorationImage(
-                          image: _image != null
-                              ? FileImage(_image)
+                          image: (contact.image != null &&
+                                  contact.image.isNotEmpty)
+                              ? _image != null
+                                  ? FileImage(_image)
+                                  : MemoryImage(
+                                      ImageConversion.dataFromBase64String(
+                                        contact.image,
+                                      ),
+                                    )
                               : AssetImage(
                                   'assets/images/user_profile_placeholder.png'),
                           fit: BoxFit.cover,
@@ -103,6 +113,7 @@ class _AddContactScreenState extends State<AddContactScreen> {
                         margin: const EdgeInsets.symmetric(horizontal: 10.0),
                         child: TextFormField(
                           keyboardType: TextInputType.text,
+                          initialValue: contact.firstName,
                           textCapitalization: TextCapitalization.words,
                           style: TextStyle(color: Colors.white),
                           decoration: InputDecoration(
@@ -124,6 +135,7 @@ class _AddContactScreenState extends State<AddContactScreen> {
                         margin: const EdgeInsets.symmetric(horizontal: 10.0),
                         child: TextFormField(
                           keyboardType: TextInputType.text,
+                          initialValue: contact.lastName,
                           textCapitalization: TextCapitalization.words,
                           style: TextStyle(color: Colors.white),
                           decoration: InputDecoration(
@@ -143,6 +155,7 @@ class _AddContactScreenState extends State<AddContactScreen> {
                         margin: const EdgeInsets.symmetric(horizontal: 10.0),
                         child: TextFormField(
                           keyboardType: TextInputType.number,
+                          initialValue: contact.cellularNum.toString(),
                           textCapitalization: TextCapitalization.words,
                           style: TextStyle(color: Colors.white),
                           decoration: InputDecoration(
@@ -267,25 +280,25 @@ class _AddContactScreenState extends State<AddContactScreen> {
     }
   }
 
-  _submit() async {
+  _submit(Contact oldContact) async {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
 
       if (_name.isNotEmpty && _cellNumber.isNotEmpty) {
         Contact contact = Contact(
-          id: DateTime.now().toIso8601String(),
+          id: oldContact.id,
           firstName: _name,
           lastName: _lastName,
-          image: _image == null ? '' : _stringImage,
+          image: _image == null ? oldContact.image : _stringImage,
           cellularNum: int.parse(_cellNumber),
           homeNum: int.parse('0'),
           workplaceNum: int.parse('0'),
           email: '',
           birthdate: '',
         );
-        var result = await DatabaseHelper().addContact(contact);
+        var result = await DatabaseHelper().editContact(contact);
         if (result != -1) {
-          Navigator.of(context).pop(contact.id);
+          Navigator.of(context).pop(contact);
         }
       }
     }

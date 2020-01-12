@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import './screens/home_screen.dart';
 import './screens/contact_summary.dart';
 import './screens/add_contact.dart';
+import './screens/edit_contact_screen.dart';
 
 void main() => runApp(MyApp());
 
@@ -25,6 +26,7 @@ class MyApp extends StatelessWidget {
       routes: {
         AddContactScreen.routeName: (_) => AddContactScreen(),
         ContactSummary.routeName: (_) => ContactSummary(),
+        EditContactScreen.routeName: (_) => EditContactScreen(),
       },
     );
   }

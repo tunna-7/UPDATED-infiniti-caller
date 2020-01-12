@@ -9,13 +9,13 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   PageController _pageController;
-  int _currentIndexTab = 0;
+  int _currentIndexTab = 1;
 
   @override
   void initState() {
     super.initState();
 
-    _pageController = PageController();
+    _pageController = PageController(initialPage: 1);
   }
 
   @override
@@ -59,6 +59,8 @@ class _HomeScreenState extends State<HomeScreen> {
         onPageChanged: (index) => setState(() {
           _currentIndexTab = index;
         }),
+
+        controller: _pageController,
         children: <Widget>[
           FavoritesScreen(),
           ContactsScreen(),

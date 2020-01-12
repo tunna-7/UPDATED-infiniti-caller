@@ -61,8 +61,9 @@ class _ContactsScreenState extends State<ContactsScreen> {
             icon: Icon(
               Icons.add,
             ),
-            onPressed: () =>
-                Navigator.of(context).pushNamed(AddContactScreen.routeName),
+            onPressed: () {
+              _updateAddedListOfContacts();
+            },
           ),
         ],
       ),
@@ -100,7 +101,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
                     Icons.search,
                     color: Colors.white,
                   ),
-                  hintText: 'Search in 288 contacts',
+                  hintText: 'Search in ${contactList.length} contacts',
                   hintStyle: TextStyle(color: Colors.white54),
                 ),
               ),
@@ -113,7 +114,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
                   borderRadius: BorderRadius.circular(30.0),
                   color: Theme.of(context).accentColor,
                 ),
-                child: contactList.length < 0
+                child: contactList.length <= 0
                     ? Center(
                         child: Text(
                           'No contacts yet. Click + icon to add contacts',
@@ -140,14 +141,16 @@ class _ContactsScreenState extends State<ContactsScreen> {
     return Column(
       children: <Widget>[
         GestureDetector(
-          onTap: () => Navigator.of(context)
-              .pushNamed(ContactSummary.routeName, arguments: contact),
+          onTap: () {
+            _updateDeletedListOfContacts(contact);
+          },
           child: ListTile(
             leading: Container(
               width: 60,
               height: 100,
               child: CircleAvatar(
-                backgroundImage: contact.image != null
+                backgroundImage: contact.image != null &&
+                        contact.image.isNotEmpty
                     ? MemoryImage(
                         ImageConversion.dataFromBase64String(
                           contact.image,
@@ -176,5 +179,19 @@ class _ContactsScreenState extends State<ContactsScreen> {
         ),
       ],
     );
+  }
+
+  _updateDeletedListOfContacts(Contact contact) async {
+    final result = await Navigator.of(context)
+        .pushNamed(ContactSummary.routeName, arguments: contact);
+
+    _setContactList();
+  }
+
+  _updateAddedListOfContacts() async {
+    final result =
+        await Navigator.of(context).pushNamed(AddContactScreen.routeName);
+
+    _setContactList();
   }
 }

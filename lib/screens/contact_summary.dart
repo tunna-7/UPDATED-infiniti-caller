@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import './add_contact.dart';
+import '../screens/edit_contact_screen.dart';
 import '../models/contact.dart';
 import '../utilities/image_conversion.dart';
 import '../utilities/DatabaseHelper.dart';
@@ -15,7 +15,18 @@ class ContactSummary extends StatefulWidget {
 class _ContactSummaryState extends State<ContactSummary> {
   @override
   Widget build(BuildContext context) {
-    final Contact contact = ModalRoute.of(context).settings.arguments;
+    Contact contact;
+    contact = ModalRoute.of(context).settings.arguments;
+
+
+    _updateInfoAfterEdit() async {
+      final result = await Navigator.of(context)
+          .pushNamed(EditContactScreen.routeName, arguments: contact);
+
+      setState(() {
+        contact = result;
+      });
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -34,8 +45,9 @@ class _ContactSummaryState extends State<ContactSummary> {
             icon: Icon(
               Icons.mode_edit,
             ),
-            onPressed: () =>
-                Navigator.of(context).pushNamed(AddContactScreen.routeName),
+            onPressed: () {
+              _updateInfoAfterEdit();
+            },
           ),
         ],
       ),
@@ -52,7 +64,7 @@ class _ContactSummaryState extends State<ContactSummary> {
                 borderRadius: BorderRadius.circular(10.0),
                 color: Colors.white,
                 image: DecorationImage(
-                  image: contact.image != null
+                  image: contact.image != null && contact.image.isNotEmpty
                       ? MemoryImage(
                           ImageConversion.dataFromBase64String(
                             contact.image,
@@ -164,7 +176,8 @@ class _ContactSummaryState extends State<ContactSummary> {
             FlatButton(
               child: Text(
                 'Delete Contact',
-                style: TextStyle(color: Theme.of(context).errorColor, fontSize: 16.0),
+                style: TextStyle(
+                    color: Theme.of(context).errorColor, fontSize: 16.0),
               ),
               onPressed: () {
                 _deleteContact(contact.id);
