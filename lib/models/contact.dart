@@ -7,7 +7,9 @@ class Contact {
   int homeNum;
   int workplaceNum;
   String email;
+  String gender;
   String birthdate;
+  bool favorite;
 
   Contact({
     this.id,
@@ -18,7 +20,9 @@ class Contact {
     this.homeNum,
     this.workplaceNum,
     this.email,
+    this.gender,
     this.birthdate,
+    this.favorite = false,
   });
 
   Map<String, dynamic> toMap() {
@@ -31,7 +35,9 @@ class Contact {
       'homeNum': homeNum,
       'workplaceNum': workplaceNum,
       'email': email,
+      'gender': gender,
       'birthdate': birthdate,
+      'favorite': favorite,
     };
   }
 
@@ -44,6 +50,8 @@ class Contact {
     homeNum = map['homeNum'];
     workplaceNum = map['workplaceNum'];
     email = map['email'];
+    gender = map['gender'];
     birthdate = map['birthdate'];
+    favorite = map['favorite'] == 1;
   }
 }

@@ -18,7 +18,6 @@ class _ContactSummaryState extends State<ContactSummary> {
     Contact contact;
     contact = ModalRoute.of(context).settings.arguments;
 
-
     _updateInfoAfterEdit() async {
       final result = await Navigator.of(context)
           .pushNamed(EditContactScreen.routeName, arguments: contact);
@@ -97,7 +96,7 @@ class _ContactSummaryState extends State<ContactSummary> {
                   children: <Widget>[
                     ListTile(
                       title: const Text(
-                        'Celluler Phone',
+                        'Cellular Phone',
                         style: TextStyle(fontSize: 16.0),
                       ),
                       subtitle: Text(contact.cellularNum.toString()),
@@ -112,63 +111,36 @@ class _ContactSummaryState extends State<ContactSummary> {
                         ],
                       ),
                     ),
-                    contact.homeNum == 0
-                        ? SizedBox.shrink()
-                        : ListTile(
-                            title: const Text(
-                              'Home Phone',
-                              style: TextStyle(fontSize: 16.0),
-                            ),
-                            subtitle: Text(contact.homeNum.toString()),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                Icon(Icons.phone),
-                                SizedBox(
-                                  width: 15.0,
-                                ),
-                                Icon(Icons.message),
-                              ],
-                            ),
-                          ),
-                    contact.email.isEmpty
-                        ? SizedBox.shrink()
-                        : ListTile(
-                            title: const Text(
-                              'Email',
-                              style: TextStyle(fontSize: 16.0),
-                            ),
-                            subtitle: Text(contact.email),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                Icon(Icons.phone),
-                                SizedBox(
-                                  width: 15.0,
-                                ),
-                                Icon(Icons.message),
-                              ],
-                            ),
-                          ),
-                    contact.birthdate.isEmpty
-                        ? SizedBox.shrink()
-                        : ListTile(
-                            title: const Text(
-                              'Birthdate',
-                              style: TextStyle(fontSize: 16.0),
-                            ),
-                            subtitle: Text(contact.birthdate),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                Icon(Icons.phone),
-                                SizedBox(
-                                  width: 15.0,
-                                ),
-                                Icon(Icons.message),
-                              ],
-                            ),
-                          ),
+                    Flexible(
+                      child: ListTile(
+                        title: const Text(
+                          'Email',
+                          style: TextStyle(fontSize: 16.0),
+                        ),
+                        subtitle: Text(contact.email.toString()),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Icon(Icons.message),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Flexible(
+                      child: ListTile(
+                        title: const Text(
+                          'Gender',
+                          style: TextStyle(fontSize: 16.0),
+                        ),
+                        subtitle: Text(contact.gender.toString()),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Icon(Icons.wc),
+                          ],
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),

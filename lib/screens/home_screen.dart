@@ -41,10 +41,10 @@ class _HomeScreenState extends State<HomeScreen> {
           });
         },
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.phone),
-            title: Text('Phone'),
-          ),
+          // BottomNavigationBarItem(
+          //   icon: Icon(Icons.phone),
+          //   title: Text('Phone'),
+          // ),
           BottomNavigationBarItem(
             icon: Icon(Icons.contacts),
             title: Text('Contacts'),
@@ -59,10 +59,9 @@ class _HomeScreenState extends State<HomeScreen> {
         onPageChanged: (index) => setState(() {
           _currentIndexTab = index;
         }),
-
         controller: _pageController,
         children: <Widget>[
-          FavoritesScreen(),
+          // FavoritesScreen(),
           ContactsScreen(),
           FavoritesScreen(),
         ],

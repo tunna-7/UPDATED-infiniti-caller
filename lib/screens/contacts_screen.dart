@@ -19,6 +19,13 @@ class _ContactsScreenState extends State<ContactsScreen> {
     super.initState();
 
     _setContactList();
+
+    printFav();
+  }
+
+  void printFav() async {
+    var favorite = await DatabaseHelper().getFavorites();
+    print(favorite.toString());
   }
 
   void _setContactList() async {
@@ -55,7 +62,9 @@ class _ContactsScreenState extends State<ContactsScreen> {
             icon: Icon(
               Icons.group,
             ),
-            onPressed: () {},
+            onPressed: () {
+              printFav();
+            },
           ),
           IconButton(
             icon: Icon(
@@ -90,6 +99,14 @@ class _ContactsScreenState extends State<ContactsScreen> {
                 ],
               ),
               child: TextField(
+                onChanged: (value) async {
+                  try {
+                    var result = await DatabaseHelper().searchContact(value);
+                    setState(() {
+                      contactList = result;
+                    });
+                  } catch (e) {}
+                },
                 style: TextStyle(color: Colors.white),
                 decoration: InputDecoration(
                   border: InputBorder.none,
@@ -165,8 +182,24 @@ class _ContactsScreenState extends State<ContactsScreen> {
             ),
             subtitle: Text(contact.cellularNum.toString()),
             trailing: IconButton(
-              icon: Icon(Icons.favorite_border),
-              onPressed: () {},
+              icon: Icon(
+                  contact.favorite ? Icons.favorite : Icons.favorite_border),
+              onPressed: () async {
+                Contact newContact = Contact(
+                  id: contact.id,
+                  firstName: contact.firstName,
+                  lastName: contact.lastName,
+                  image: contact.image,
+                  cellularNum: contact.cellularNum,
+                  homeNum: int.parse('0'),
+                  workplaceNum: int.parse('0'),
+                  email: '',
+                  birthdate: '',
+                  favorite: !contact.favorite,
+                );
+                await DatabaseHelper().editContact(newContact);
+                _setContactList();
+              },
             ),
           ),
         ),
@@ -182,15 +215,14 @@ class _ContactsScreenState extends State<ContactsScreen> {
   }
 
   _updateDeletedListOfContacts(Contact contact) async {
-    final result = await Navigator.of(context)
+    await Navigator.of(context)
         .pushNamed(ContactSummary.routeName, arguments: contact);
 
     _setContactList();
   }
 
   _updateAddedListOfContacts() async {
-    final result =
-        await Navigator.of(context).pushNamed(AddContactScreen.routeName);
+    await Navigator.of(context).pushNamed(AddContactScreen.routeName);
 
     _setContactList();
   }

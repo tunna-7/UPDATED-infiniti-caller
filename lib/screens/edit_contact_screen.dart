@@ -16,8 +16,9 @@ class EditContactScreen extends StatefulWidget {
 class _EditContactScreenState extends State<EditContactScreen> {
   final _formKey = GlobalKey<FormState>();
   File _image;
-  String _name, _lastName, _cellNumber, _stringImage;
-  DatabaseHelper _databaseHelper = DatabaseHelper();
+  String _name, _lastName, _cellNumber, _stringImage, _email, _gender;
+  bool _favorite = true;
+  // DatabaseHelper _databaseHelper = DatabaseHelper();
 
   @override
   Widget build(BuildContext context) {
@@ -122,7 +123,7 @@ class _EditContactScreenState extends State<EditContactScreen> {
                             ),
                             contentPadding: const EdgeInsets.only(
                                 top: 14.0, right: 8.0, left: 8.0),
-                            hintText: 'Enter name',
+                            hintText: 'Enter first name',
                             hintStyle: TextStyle(color: Colors.white54),
                           ),
                           validator: (input) =>
@@ -177,76 +178,104 @@ class _EditContactScreenState extends State<EditContactScreen> {
                   ),
                 ],
               ),
-              Container(
-                margin: const EdgeInsets.only(top: 12.0, left: 12.0),
-                child: Row(
-                  children: <Widget>[
-                    IconButton(
-                      icon: Icon(
-                        Icons.add_circle_outline,
-                      ),
-                      onPressed: () {},
+              Row(
+                children: <Widget>[
+                  Container(
+                    margin: const EdgeInsets.only(top: 12.0, left: 12.0),
+                    child: Row(
+                      children: <Widget>[
+                        IconButton(
+                          icon: Icon(
+                            Icons.add_circle_outline,
+                          ),
+                          onPressed: () {},
+                        ),
+                        Text(
+                          'Email',
+                          style: TextStyle(
+                            fontSize: 16.0,
+                          ),
+                        ),
+                      ],
                     ),
-                    Text(
-                      'Phone Number',
-                      style: TextStyle(
-                        fontSize: 16.0,
+                  ),
+                  SizedBox(
+                    width: 20,
+                  ),
+                  Container(
+                    width: 200.0,
+                    margin: const EdgeInsets.symmetric(horizontal: 10.0),
+                    child: TextFormField(
+                      keyboardType: TextInputType.emailAddress,
+                      initialValue: contact.email.toString(),
+                      textCapitalization: TextCapitalization.words,
+                      style: TextStyle(color: Colors.white),
+                      decoration: InputDecoration(
+                        border: UnderlineInputBorder(
+                          borderSide: BorderSide(width: 1.0),
+                        ),
+                        contentPadding: const EdgeInsets.only(
+                            top: 14.0, right: 8.0, left: 8.0),
+                        hintText: 'Enter email',
+                        hintStyle: TextStyle(color: Colors.white54),
                       ),
+                      onSaved: (input) => _email = input,
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
+
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: Divider(
                   thickness: 1.0,
                 ),
               ),
-
-              Container(
-                margin: const EdgeInsets.only(top: 12.0, left: 12.0),
-                child: Row(
-                  children: <Widget>[
-                    IconButton(
-                      icon: Icon(
-                        Icons.add_circle_outline,
-                      ),
-                      onPressed: () {},
+              Row(
+                children: <Widget>[
+                  Container(
+                    margin: const EdgeInsets.only(top: 12.0, left: 12.0),
+                    child: Row(
+                      children: <Widget>[
+                        IconButton(
+                          icon: Icon(
+                            Icons.add_circle_outline,
+                          ),
+                          onPressed: () {},
+                        ),
+                        Text(
+                          'Gender',
+                          style: TextStyle(
+                            fontSize: 16.0,
+                          ),
+                        ),
+                      ],
                     ),
-                    Text(
-                      'Email',
-                      style: TextStyle(
-                        fontSize: 16.0,
+                  ),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  Container(
+                    width: 200.0,
+                    margin: const EdgeInsets.symmetric(horizontal: 10.0),
+                    child: TextFormField(
+                      keyboardType: TextInputType.text,
+                      initialValue: contact.gender.toString(),
+                      textCapitalization: TextCapitalization.words,
+                      style: TextStyle(color: Colors.white),
+                      decoration: InputDecoration(
+                        border: UnderlineInputBorder(
+                          borderSide: BorderSide(width: 1.0),
+                        ),
+                        contentPadding: const EdgeInsets.only(
+                            top: 14.0, right: 8.0, left: 8.0),
+                        hintText: 'Enter Gender',
+                        hintStyle: TextStyle(color: Colors.white54),
                       ),
+                      onSaved: (input) => _gender = input,
                     ),
-                  ],
-                ),
-              ),
-
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: Divider(
-                  thickness: 1.0,
-                ),
-              ),
-              Container(
-                margin: const EdgeInsets.only(top: 12.0, left: 12.0),
-                child: Row(
-                  children: <Widget>[
-                    IconButton(
-                      icon: Icon(
-                        Icons.add_circle_outline,
-                      ),
-                      onPressed: () {},
-                    ),
-                    Text(
-                      'Birthday',
-                      style: TextStyle(
-                        fontSize: 16.0,
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -293,8 +322,10 @@ class _EditContactScreenState extends State<EditContactScreen> {
           cellularNum: int.parse(_cellNumber),
           homeNum: int.parse('0'),
           workplaceNum: int.parse('0'),
-          email: '',
+          email: _email,
+          gender: _gender,
           birthdate: '',
+          favorite: _favorite,
         );
         var result = await DatabaseHelper().editContact(contact);
         if (result != -1) {

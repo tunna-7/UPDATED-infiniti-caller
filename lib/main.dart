@@ -5,6 +5,7 @@ import './screens/contact_summary.dart';
 import './screens/add_contact.dart';
 import './screens/edit_contact_screen.dart';
 
+
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -12,13 +13,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Phonebook',
+      title: 'infiniti caller',
       theme: ThemeData(
         brightness: Brightness.dark,
         primaryColor: Color(0xFF1B1B1B),
         accentColor: Color(0xFF323232),
         buttonTheme: ButtonThemeData(
-          buttonColor: Color(0xFFFC6E20), 
+          buttonColor: Color(0xFFFC6E20),
         ),
       ),
       debugShowCheckedModeBanner: false,

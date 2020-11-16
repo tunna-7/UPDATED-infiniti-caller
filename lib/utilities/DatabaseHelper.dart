@@ -19,7 +19,9 @@ class DatabaseHelper {
   static const String HOME_NUM = 'homeNum';
   static const String WORKPLACE_NUM = 'workplaceNum';
   static const String EMAIL = 'email';
+  static const String GENDER = 'gender';
   static const String BIRTHDATE = 'birthdate';
+  static const String FAVORITE = 'favorite';
 
   DatabaseHelper._createInstance();
 
@@ -35,13 +37,15 @@ class DatabaseHelper {
     Directory directory = await getApplicationDocumentsDirectory();
     String path = directory.path + DB_NAME;
 
-    var contactDatabase = await  openDatabase(path, version: 2, onCreate: _createDb);
+    var contactDatabase =
+        await openDatabase(path, version: 2, onCreate: _createDb);
     return contactDatabase;
   }
 
   void _createDb(Database db, int newVersion) async {
+    print('new db created');
     await db.execute(
-        'CREATE TABLE $TABLE($ID TEXT PRIMERY KEY, $FIRST_NAME TEXT, $LAST_NAME TEXT, $IMAGE TEXT, $CELL_NUM INTEGER, $HOME_NUM INTEGER, $WORKPLACE_NUM INTEGER, $EMAIL TEXT, $BIRTHDATE TEXT)');
+        'CREATE TABLE $TABLE($ID TEXT PRIMERY KEY, $FIRST_NAME TEXT, $LAST_NAME TEXT, $IMAGE TEXT, $CELL_NUM INTEGER, $HOME_NUM INTEGER, $WORKPLACE_NUM INTEGER, $EMAIL TEXT, $GENDER TEXT , $BIRTHDATE TEXT, $FAVORITE BOOLEAN)');
   }
 
   Future<Database> get database async {
@@ -50,6 +54,21 @@ class DatabaseHelper {
     }
 
     return _database;
+  }
+
+  Future searchContact(String query) async {
+    Database db = await this.database;
+
+    var result = await db
+        .rawQuery('SELECT * FROM $TABLE WHERE $FIRST_NAME LIKE "%$query%"');
+    return result;
+  }
+
+  Future getFavorites() async {
+    Database db = await this.database;
+
+    var result = await db.rawQuery('SELECT * FROM $TABLE WHERE $FAVORITE = 1');
+    return result;
   }
 
   Future<List<Map<String, dynamic>>> getContactsList() async {
@@ -77,14 +96,16 @@ class DatabaseHelper {
 
   Future<int> deleteContact(String id) async {
     Database db = await this.database;
-    var result = await db.rawDelete('DELETE FROM $TABLE WHERE $ID = ?', ['$id']);
+    var result =
+        await db.rawDelete('DELETE FROM $TABLE WHERE $ID = ?', ['$id']);
 
     return result;
   }
 
   Future<int> getTotalContacts() async {
     Database db = await this.database;
-    List<Map<String, dynamic>> x = await db.rawQuery('SELECT COUNT (*) from $TABLE');
+    List<Map<String, dynamic>> x =
+        await db.rawQuery('SELECT COUNT (*) from $TABLE');
 
     return Sqflite.firstIntValue(x);
   }
